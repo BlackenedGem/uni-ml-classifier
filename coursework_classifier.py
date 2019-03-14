@@ -181,47 +181,48 @@ while epoch < 10:
 # endregion
 # region Inference on dataset
 
-def plot_image(i, predictions_array, true_label, img):
-    predictions_array, true_label, img = predictions_array[i], true_label[i], img[i]
-    plt.grid(False)
-    plt.xticks([])
-    plt.yticks([])
-
-    plt.imshow(img, cmap=plt.cm.binary)
-
-    predicted_label = np.argmax(predictions_array)
-    color = '#335599' if predicted_label == true_label else '#ee4433'
-
-    # noinspection PyTypeChecker
-    plt.xlabel("{} {:2.0f}% ({})".format(class_names[predicted_label],
-                                         100 * np.max(predictions_array),
-                                         class_names[true_label]),
-               color=color)
-
-def plot_value_array(i, predictions_array, true_label):
-    predictions_array, true_label = predictions_array[i], true_label[i]
-    plt.grid(False)
-    plt.xticks([])
-    plt.yticks([])
-    thisplot = plt.bar(range(len(class_names)), predictions_array, color="#777777")
-    plt.ylim([0, 1])
-    predicted_label = np.argmax(predictions_array)
-
-    thisplot[predicted_label].set_color('#ee4433')
-    thisplot[true_label].set_color('#335599')
-
-test_images, test_labels = next(test_iterator)
-test_images, test_labels = test_images.to(device), test_labels.to(device)
-test_preds = torch.softmax(N(test_images).view(test_images.size(0), len(class_names)), dim=1).data.squeeze().cpu().numpy()
-
-num_rows = 4
-num_cols = 4
-num_images = num_rows * num_cols
-plt.figure(figsize=(2 * 2 * num_cols, 2 * num_rows))
-for i in range(num_images):
-    plt.subplot(num_rows, 2 * num_cols, 2 * i + 1)
-    plot_image(i, test_preds, test_labels.cpu(), test_images.cpu().squeeze().permute(1, 3, 2, 0).contiguous().permute(3, 2, 1, 0))
-    plt.subplot(num_rows, 2 * num_cols, 2 * i + 2)
-    plot_value_array(i, test_preds, test_labels)
+# def plot_image(i, predictions_array, true_label, img):
+#     predictions_array, true_label, img = predictions_array[i], true_label[i], img[i]
+#     plt.grid(False)
+#     plt.xticks([])
+#     plt.yticks([])
+#
+#     plt.imshow(img, cmap=plt.cm.binary)
+#
+#     predicted_label = np.argmax(predictions_array)
+#     color = '#335599' if predicted_label == true_label else '#ee4433'
+#
+#     # noinspection PyTypeChecker
+#     plt.xlabel("{} {:2.0f}% ({})".format(class_names[predicted_label],
+#                                          100 * np.max(predictions_array),
+#                                          class_names[true_label]),
+#                color=color)
+#
+# def plot_value_array(i, predictions_array, true_label):
+#     predictions_array, true_label = predictions_array[i], true_label[i]
+#     plt.grid(False)
+#     plt.xticks([])
+#     plt.yticks([])
+#     thisplot = plt.bar(range(len(class_names)), predictions_array, color="#777777")
+#     plt.ylim([0, 1])
+#     predicted_label = np.argmax(predictions_array)
+#
+#     thisplot[predicted_label].set_color('#ee4433')
+#     thisplot[true_label].set_color('#335599')
+#
+# test_images, test_labels = next(test_iterator)
+# test_images, test_labels = test_images.to(device), test_labels.to(device)
+# test_preds = torch.softmax(N(test_images).view(test_images.size(0), len(class_names)), dim=1).data.squeeze().cpu().numpy()
+#
+# num_rows = 4
+# num_cols = 4
+# num_images = num_rows * num_cols
+# plt.figure(figsize=(2 * 2 * num_cols, 2 * num_rows))
+# for i in range(num_images):
+#     plt.subplot(num_rows, 2 * num_cols, 2 * i + 1)
+#     plot_image(i, test_preds, test_labels.cpu(), test_images.cpu().squeeze().permute(1, 3, 2, 0).contiguous().permute(3, 2, 1, 0))
+#     plt.subplot(num_rows, 2 * num_cols, 2 * i + 2)
+#     plot_value_array(i, test_preds, test_labels)
+# plt.show()
 
 # endregion

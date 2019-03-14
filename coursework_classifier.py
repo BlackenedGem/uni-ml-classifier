@@ -75,8 +75,8 @@ print(f'> Size of test dataset {len(test_loader.dataset)}')
 # plt.show()
 
 # endregion
+# region Define a simple model
 
-"""**Define a simple model**"""
 
 # define the model (a simple classifier)
 class MyNetwork(nn.Module):
@@ -101,12 +101,13 @@ print(f'> Number of network parameters {len(torch.nn.utils.parameters_to_vector(
 # initialise the optimiser
 optimiser = torch.optim.SGD(N.parameters(), lr=0.001)
 epoch = 0
-liveplot = PlotLosses()
+# liveplot = PlotLosses()
 
+# endregion
+# region Main training and testing loop
 """**Main training and testing loop**"""
 
 while epoch < 10:
-
     # arrays for metrics
     logs = {}
     train_loss_arr = np.zeros(0)
@@ -140,18 +141,24 @@ while epoch < 10:
         test_loss_arr = np.append(test_loss_arr, loss.cpu().data)
         test_acc_arr = np.append(test_acc_arr, pred.data.eq(t.view_as(pred)).float().mean().item())
 
+    print(f"Epoch {epoch} finished")
+    print("\tAccuracy: " + str(train_acc_arr.mean()))
+    print("\tVal Accuracy: " + str(test_acc_arr.mean()))
+    print("\tLoss: " + str(train_loss_arr.mean()))
+    print("\tVal loss: " + str(test_loss_arr.mean()))
     # NOTE: live plot library has dumb naming forcing our 'test' to be called 'validation'
-    liveplot.update({
-        'accuracy': train_acc_arr.mean(),
-        'val_accuracy': test_acc_arr.mean(),
-        'loss': train_loss_arr.mean(),
-        'val_loss': test_loss_arr.mean()
-    })
-    liveplot.draw()
+    # liveplot.update({
+    #     'accuracy': train_acc_arr.mean(),
+    #     'val_accuracy': test_acc_arr.mean(),
+    #     'loss': train_loss_arr.mean(),
+    #     'val_loss': test_loss_arr.mean()
+    # })
+    # liveplot.draw()
 
-    epoch = epoch + 1
+    epoch += 1
 
-"""**Inference on dataset**"""
+# endregion
+# region Inference on dataset
 
 def plot_image(i, predictions_array, true_label, img):
     predictions_array, true_label, img = predictions_array[i], true_label[i], img[i]
@@ -164,6 +171,7 @@ def plot_image(i, predictions_array, true_label, img):
     predicted_label = np.argmax(predictions_array)
     color = '#335599' if predicted_label == true_label else '#ee4433'
 
+    # noinspection PyTypeChecker
     plt.xlabel("{} {:2.0f}% ({})".format(class_names[predicted_label],
                                          100 * np.max(predictions_array),
                                          class_names[true_label]),
@@ -194,3 +202,5 @@ for i in range(num_images):
     plot_image(i, test_preds, test_labels.cpu(), test_images.cpu().squeeze().permute(1, 3, 2, 0).contiguous().permute(3, 2, 1, 0))
     plt.subplot(num_rows, 2 * num_cols, 2 * i + 2)
     plot_value_array(i, test_preds, test_labels)
+
+# endregion

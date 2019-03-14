@@ -30,12 +30,18 @@ import matplotlib.pyplot as plt
 import time
 from livelossplot import PlotLosses
 
+from functions import *
+
+print(f"{torch.cuda.device_count()} CUDA device(s) found")
 if torch.cuda.is_available():
-    print("Using CUDA")
     device = torch.device('cuda')
+    device_name = torch.cuda.get_device_name(torch.cuda.current_device())
+
+    print("Using CUDA - " + device_name)
 else:
     print("Using CPU")
     device = torch.device('cpu')
+
 
 # endregion
 # region Import dataset
@@ -67,8 +73,8 @@ test_loader = torch.utils.data.DataLoader(
 train_iterator = iter(cycle(train_loader))
 test_iterator = iter(cycle(test_loader))
 
-print(f'> Size of training dataset {len(train_loader.dataset)}')
-print(f'> Size of test dataset {len(test_loader.dataset)}')
+print(f'> Size of training dataset {len(train_loader.dataset):,}')
+print(f'> Size of test dataset {len(test_loader.dataset):,}')
 
 # endregion
 # region View some of the test dataset
@@ -104,7 +110,7 @@ class MyNetwork(nn.Module):
 
 N = MyNetwork().to(device)
 
-print(f'> Number of network parameters {len(torch.nn.utils.parameters_to_vector(N.parameters()))}')
+print(f'> Number of network parameters {len(torch.nn.utils.parameters_to_vector(N.parameters())):,}')
 
 # initialise the optimiser
 optimiser = torch.optim.SGD(N.parameters(), lr=0.001)
@@ -125,7 +131,7 @@ while epoch < 10:
     test_loss_arr = np.zeros(0)
     test_acc_arr = np.zeros(0)
 
-    # iterate over some of the train dateset
+    # iterate over some of the train dataset
     for i in range(1000):
         x, t = next(train_iterator)
         x, t = x.to(device), t.to(device)
@@ -151,11 +157,15 @@ while epoch < 10:
         test_loss_arr = np.append(test_loss_arr, loss.cpu().data)
         test_acc_arr = np.append(test_acc_arr, pred.data.eq(t.view_as(pred)).float().mean().item())
 
-    print(f"Epoch {epoch} finished")
+    total_duration = time.time() - start_time
+    loop_duration = time.time() - loop_start_time
+
+    print(f"Epoch {epoch + 1} finished ({format_time(loop_duration)}/{format_time(total_duration)})")
     print("\tAccuracy: " + str(train_acc_arr.mean()))
     print("\tVal Accuracy: " + str(test_acc_arr.mean()))
     print("\tLoss: " + str(train_loss_arr.mean()))
     print("\tVal loss: " + str(test_loss_arr.mean()))
+
     # NOTE: live plot library has dumb naming forcing our 'test' to be called 'validation'
     # liveplot.update({
     #     'accuracy': train_acc_arr.mean(),
@@ -166,6 +176,7 @@ while epoch < 10:
     # liveplot.draw()
 
     epoch += 1
+    loop_start_time = time.time()
 
 # endregion
 # region Inference on dataset

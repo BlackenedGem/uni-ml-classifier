@@ -1,19 +1,18 @@
 # This file contains functions used in the coursework
 # It's easier to separate them out for readability
 
-def format_time(start_time, end_time):
-    time_diff = end_time - start_time
+def format_time(duration):
+    seconds = duration % 60
+    duration //= 60
+    minutes = int(duration % 60)
+    hours = int(duration // 60)
 
-    seconds = time_diff // 60
-    time_diff -= seconds
-    time_diff //= 60
+    time_string = f"{seconds:02}"
+    if hours > 0:
+        time_string = f"{hours}:{minutes:02}:{seconds:02.0f}"
+    elif minutes > 0:
+        time_string = f"{minutes:02}:{seconds:02.0f}"
+    else:
+        time_string = f"{seconds:.1f}s"
 
-    minutes = time_diff // 60
-    time_diff -= minutes
-
-    hours = time_diff // 60
-
-    time_string = f"{seconds}s"
-    if minutes > 0:
-        time
-    pass
+    return time_string

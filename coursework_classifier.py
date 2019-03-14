@@ -18,6 +18,8 @@ accelerator = cuda_output[0] if exists('/dev/nvidia0') else 'cpu'
 **Main imports**
 """
 
+# region Imports and pytorch setup
+
 import math
 import numpy as np
 import torch
@@ -25,10 +27,17 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 import matplotlib.pyplot as plt
+import time
 from livelossplot import PlotLosses
 
-device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+if torch.cuda.is_available():
+    print("Using CUDA")
+    device = torch.device('cuda')
+else:
+    print("Using CPU")
+    device = torch.device('cpu')
 
+# endregion
 # region Import dataset
 
 # helper function to make getting another batch of data easier
@@ -77,7 +86,6 @@ print(f'> Size of test dataset {len(test_loader.dataset)}')
 # endregion
 # region Define a simple model
 
-
 # define the model (a simple classifier)
 class MyNetwork(nn.Module):
     def __init__(self):
@@ -105,7 +113,9 @@ epoch = 0
 
 # endregion
 # region Main training and testing loop
-"""**Main training and testing loop**"""
+
+start_time = time.time()
+loop_start_time = time.time()
 
 while epoch < 10:
     # arrays for metrics

@@ -1,6 +1,8 @@
 # This file contains functions used in the coursework
 # It's easier to separate them out for readability
 
+import matplotlib.pyplot as plt
+
 def format_time(duration):
     seconds = duration % 60
     duration //= 60
@@ -16,3 +18,22 @@ def format_time(duration):
         time_string = f"{seconds:.1f}s"
 
     return time_string
+
+def create_end_graphs(acc, val_acc, loss, val_loss):
+    plt.figure(figsize=(10, 5))
+
+    plt.subplot(1, 2, 1)
+    plt.ylabel("Accuracy")
+    plt.title("Accuracy")
+    plt.plot(acc, 'b-', label='training')
+    plt.plot(val_acc, 'g-', label='validation')
+    plt.legend(loc='center right')
+
+    plt.subplot(1, 2, 2)
+    plt.title("Loss")
+    plt.xlabel("Epoch")
+    plt.plot(loss, 'b-', label='training')
+    plt.plot(val_loss, 'g-', label='validation')
+    plt.legend(loc='upper right')
+
+    plt.show()

@@ -27,7 +27,7 @@ def format_time(duration):
     return time_string
 
 def create_end_graphs(acc, val_acc, loss, val_loss):
-    plt.figure(figsize=(10, 5))
+    plt.figure(figsize=(10, 4))
 
     sp = plt.subplot(1, 2, 1)
     # noinspection PyUnresolvedReferences

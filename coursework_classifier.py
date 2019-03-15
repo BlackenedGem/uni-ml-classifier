@@ -31,12 +31,13 @@ from livelossplot import PlotLosses
 
 from functions import *
 
+print("Using Pytorch " + torch.__version__)
 print(f"{torch.cuda.device_count()} CUDA device(s) found")
 if torch.cuda.is_available():
     device = torch.device('cuda')
     device_name = torch.cuda.get_device_name(torch.cuda.current_device())
 
-    print("Using CUDA - " + device_name)
+    print("Using CUDA " + torch.version.cuda + " - " + device_name)
 else:
     print("Using CPU")
     device = torch.device('cpu')
@@ -127,7 +128,7 @@ test_acc_graph = []
 train_loss_graph = []
 test_loss_graph = []
 
-while epoch < 200:
+while epoch < 500:
     # arrays for metrics
     logs = {}
     train_loss_arr = np.zeros(0)

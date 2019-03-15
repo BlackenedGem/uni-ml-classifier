@@ -3,6 +3,12 @@
 
 import matplotlib.pyplot as plt
 
+def format_acc(number, convert_to_percentage=False):
+    if convert_to_percentage:
+        return f"{number * 100:,.2f}%"
+    else:
+        return f"{number:,.2f}"
+
 def format_time(duration):
     seconds = duration % 60
     duration //= 60
@@ -26,13 +32,13 @@ def create_end_graphs(acc, val_acc, loss, val_loss):
     plt.title("Accuracy")
     plt.plot(acc, 'b-', label='training')
     plt.plot(val_acc, 'g-', label='validation')
-    plt.legend(loc='center right')
+    plt.legend(loc='lower right')
 
     plt.subplot(1, 2, 2)
     plt.title("Loss")
     plt.xlabel("Epoch")
     plt.plot(loss, 'b-', label='training')
     plt.plot(val_loss, 'g-', label='validation')
-    plt.legend(loc='lower right')
+    plt.legend(loc='upper right')
 
     plt.show()

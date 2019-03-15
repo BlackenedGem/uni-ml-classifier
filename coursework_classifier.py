@@ -127,7 +127,7 @@ test_acc_graph = []
 train_loss_graph = []
 test_loss_graph = []
 
-while epoch < 10:
+while epoch < 200:
     # arrays for metrics
     logs = {}
     train_loss_arr = np.zeros(0)
@@ -165,13 +165,13 @@ while epoch < 10:
     loop_duration = time.time() - loop_start_time
 
     print(f"Epoch {epoch + 1} finished ({format_time(loop_duration)}/{format_time(total_duration)})")
-    print("\tAccuracy: " + str(train_acc_arr.mean()))
-    print("\tVal Accuracy: " + str(test_acc_arr.mean()))
-    print("\tLoss: " + str(train_loss_arr.mean()))
-    print("\tVal loss: " + str(test_loss_arr.mean()))
+    print("\tAccuracy: " + format_acc(train_acc_arr.mean(), convert_to_percentage=True))
+    print("\tVal Accuracy: " + format_acc(test_acc_arr.mean(), convert_to_percentage=True))
+    print("\tLoss: " + format_acc(train_loss_arr.mean()))
+    print("\tVal loss: " + format_acc(test_loss_arr.mean()))
 
-    train_acc_graph.append(train_acc_arr.mean())
-    test_acc_graph.append(test_acc_arr.mean())
+    train_acc_graph.append(train_acc_arr.mean() * 100)
+    test_acc_graph.append(test_acc_arr.mean() * 100)
     train_loss_graph.append(train_loss_arr.mean())
     test_loss_graph.append(test_loss_arr.mean())
 

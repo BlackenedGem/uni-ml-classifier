@@ -2,6 +2,7 @@
 # It's easier to separate them out for readability
 
 import matplotlib.pyplot as plt
+import matplotlib as mlp
 
 def format_acc(number, convert_to_percentage=False):
     if convert_to_percentage:
@@ -28,8 +29,11 @@ def format_time(duration):
 def create_end_graphs(acc, val_acc, loss, val_loss):
     plt.figure(figsize=(10, 5))
 
-    plt.subplot(1, 2, 1)
+    sp = plt.subplot(1, 2, 1)
+    # noinspection PyUnresolvedReferences
+    sp.yaxis.set_major_formatter(mlp.ticker.StrMethodFormatter('{x}%'))
     plt.title("Accuracy")
+    plt.xlabel("Epoch")
     plt.plot(acc, 'b-', label='training')
     plt.plot(val_acc, 'g-', label='validation')
     plt.legend(loc='lower right')

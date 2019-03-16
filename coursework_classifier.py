@@ -108,9 +108,8 @@ class MyNetwork(nn.Module):
         self.conv3 = nn.Conv2d(in_channels=16, out_channels=128, kernel_size=4, stride=3, padding=1, dilation=3)
         self.bn3 = nn.BatchNorm2d(128)
 
-        self.lin1 = nn.Linear(in_features=128 * 3 * 3, out_features=250)
+        self.lin1 = nn.Linear(in_features=128 * 3 * 3, out_features=150)
         self.lin2 = nn.Linear(in_features=150, out_features=100)
-
 
     def forward(self, x):
         # print(x.shape)

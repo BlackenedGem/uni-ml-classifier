@@ -96,16 +96,30 @@ print(f'> Size of test dataset {len(test_loader.dataset):,}')
 class MyNetwork(nn.Module):
     def __init__(self):
         super(MyNetwork, self).__init__()
-        layers = nn.ModuleList()
-        layers.append(nn.Linear(in_features=3 * 32 * 32, out_features=512))
-        layers.append(nn.ReLU())
-        layers.append(nn.Linear(in_features=512, out_features=100))
-        self.layers = layers
+
+        self.maxpool = nn.MaxPool2d(2, 2)
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=6, kernel_size=5, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(in_channels=6, out_channels=32, kernel_size=5, stride=2, padding=1)
+
+        self.lin1 = nn.Linear(in_features=32 * 14 * 14, out_features=150)
+        self.lin2 = nn.Linear(in_features=150, out_features=100)
 
     def forward(self, x):
+        # print(x.shape)
+
+        x = F.relu(self.conv1(x))
+        # print(x.shape)
+        x = F.relu(self.conv2(x))
+        # print(x.shape)
+
         x = x.view(x.size(0), -1)  # flatten input as we're using linear layers
-        for m in self.layers:
-            x = m(x)
+        # print(x.shape)
+        x = F.leaky_relu_(self.lin1(x))
+        x = self.lin2(x)
+
+        # print(x.shape)
+        # print("Done")
+
         return x
 
 N = MyNetwork().to(device)
@@ -113,7 +127,7 @@ N = MyNetwork().to(device)
 print(f'> Number of network parameters {len(torch.nn.utils.parameters_to_vector(N.parameters())):,}')
 
 # initialise the optimiser
-optimiser = torch.optim.SGD(N.parameters(), lr=0.001)
+optimiser = torch.optim.SGD(N.parameters(), lr=0.001, momentum=0.9)
 epoch = 0
 # liveplot = PlotLosses()
 
@@ -131,7 +145,7 @@ test_loss_graph = []
 
 best_acc = 0
 
-while epoch < 10:
+while epoch < 50:
     # arrays for metrics
     logs = {}
     train_loss_arr = np.zeros(0)
@@ -140,8 +154,7 @@ while epoch < 10:
     test_acc_arr = np.zeros(0)
 
     # iterate over some of the train dataset
-    for i in range(1000):
-        x, t = next(train_iterator)
+    for x, t in train_loader:
         x, t = x.to(device), t.to(device)
 
         optimiser.zero_grad()

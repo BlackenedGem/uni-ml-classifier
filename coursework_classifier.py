@@ -120,6 +120,7 @@ epoch = 0
 # endregion
 # region Main training and testing loop
 
+# Variables to track performance
 start_time = time.time()
 loop_start_time = time.time()
 
@@ -128,7 +129,9 @@ test_acc_graph = []
 train_loss_graph = []
 test_loss_graph = []
 
-while epoch < 500:
+best_acc = 0
+
+while epoch < 10:
     # arrays for metrics
     logs = {}
     train_loss_arr = np.zeros(0)
@@ -175,6 +178,8 @@ while epoch < 500:
     test_acc_graph.append(test_acc_arr.mean() * 100)
     train_loss_graph.append(train_loss_arr.mean())
     test_loss_graph.append(test_loss_arr.mean())
+
+    best_acc = max(best_acc, test_acc_arr.mean())
 
     # NOTE: live plot library has dumb naming forcing our 'test' to be called 'validation'
     # liveplot.update({
@@ -237,4 +242,5 @@ while epoch < 500:
 
 # endregion
 
+print("Best test accuracy: " + format_acc(best_acc, convert_to_percentage=True))
 create_end_graphs(train_acc_graph, test_acc_graph, train_loss_graph, test_loss_graph)

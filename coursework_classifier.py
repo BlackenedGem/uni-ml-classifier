@@ -103,28 +103,30 @@ class MyNetwork(nn.Module):
 
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=6, kernel_size=4, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2d(6)
-        self.conv2 = nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, stride=2, padding=1)
+        self.conv2 = nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, stride=1, padding=1)
         self.bn2 = nn.BatchNorm2d(16)
-        self.conv3 = nn.Conv2d(in_channels=16, out_channels=128, kernel_size=4, stride=3, padding=1, dilation=3)
+        self.conv3 = nn.Conv2d(in_channels=16, out_channels=128, kernel_size=4, stride=2, padding=1, dilation=2)
         self.bn3 = nn.BatchNorm2d(128)
 
-        self.lin1 = nn.Linear(in_features=128 * 3 * 3, out_features=150)
-        self.lin2 = nn.Linear(in_features=150, out_features=100)
+        self.lin1 = nn.Linear(in_features=128 * 6 * 6, out_features=250)
+        self.lin2 = nn.Linear(in_features=250, out_features=150)
+        self.lin3 = nn.Linear(in_features=150, out_features=100)
 
     def forward(self, x):
         # print(x.shape)
 
         x = F.relu(self.bn1(self.conv1(x)))
         # print(x.shape)
-        x = F.relu(self.bn2(self.conv2(x)))
-        # print(x.shape)
+        x = self.bn2(F.relu(self.conv2(x)))
         x = F.relu(self.bn3(self.conv3(x)))
+        x = self.maxpool(x)
         # print(x.shape)
 
         x = x.view(x.size(0), -1)  # flatten input as we're using linear layers
         # print(x.shape)
         x = F.relu(self.lin1(x))
-        x = self.lin2(x)
+        x = F.relu(self.lin2(x))
+        x = self.lin3(x)
 
         # print(x.shape)
         # print("Done")

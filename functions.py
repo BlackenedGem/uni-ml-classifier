@@ -35,14 +35,14 @@ def create_end_graphs(acc, val_acc, loss, val_loss):
     plt.title("Accuracy")
     plt.xlabel("Epoch")
     plt.plot(acc, 'b-', label='training')
-    plt.plot(val_acc, 'g-', label='validation')
+    plt.plot(val_acc, 'g-', label='test')
     plt.legend(loc='lower right')
 
     plt.subplot(1, 2, 2)
     plt.title("Loss")
     plt.xlabel("Epoch")
     plt.plot(loss, 'b-', label='training')
-    plt.plot(val_loss, 'g-', label='validation')
+    plt.plot(val_loss, 'g-', label='test')
     plt.legend(loc='upper right')
 
     plt.show()

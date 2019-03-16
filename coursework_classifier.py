@@ -60,13 +60,15 @@ class_names = ['apple', 'aquarium_fish', 'baby', 'bear', 'beaver', 'bed', 'bee',
 
 train_loader = torch.utils.data.DataLoader(
     torchvision.datasets.CIFAR100('data', train=True, download=True, transform=torchvision.transforms.Compose([
-        torchvision.transforms.ToTensor()
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])),
     shuffle=True, batch_size=16, drop_last=True)
 
 test_loader = torch.utils.data.DataLoader(
     torchvision.datasets.CIFAR100('data', train=False, download=True, transform=torchvision.transforms.Compose([
-        torchvision.transforms.ToTensor()
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])),
     shuffle=False, batch_size=16, drop_last=True)
 
@@ -98,23 +100,31 @@ class MyNetwork(nn.Module):
         super(MyNetwork, self).__init__()
 
         self.maxpool = nn.MaxPool2d(2, 2)
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=6, kernel_size=5, stride=1, padding=1)
-        self.conv2 = nn.Conv2d(in_channels=6, out_channels=32, kernel_size=5, stride=2, padding=1)
 
-        self.lin1 = nn.Linear(in_features=32 * 14 * 14, out_features=150)
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=6, kernel_size=4, stride=1, padding=1)
+        self.bn1 = nn.BatchNorm2d(6)
+        self.conv2 = nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, stride=2, padding=1)
+        self.bn2 = nn.BatchNorm2d(16)
+        self.conv3 = nn.Conv2d(in_channels=16, out_channels=128, kernel_size=4, stride=3, padding=1, dilation=3)
+        self.bn3 = nn.BatchNorm2d(128)
+
+        self.lin1 = nn.Linear(in_features=128 * 3 * 3, out_features=250)
         self.lin2 = nn.Linear(in_features=150, out_features=100)
+
 
     def forward(self, x):
         # print(x.shape)
 
-        x = F.relu(self.conv1(x))
+        x = F.relu(self.bn1(self.conv1(x)))
         # print(x.shape)
-        x = F.relu(self.conv2(x))
+        x = F.relu(self.bn2(self.conv2(x)))
+        # print(x.shape)
+        x = F.relu(self.bn3(self.conv3(x)))
         # print(x.shape)
 
         x = x.view(x.size(0), -1)  # flatten input as we're using linear layers
         # print(x.shape)
-        x = F.leaky_relu_(self.lin1(x))
+        x = F.relu(self.lin1(x))
         x = self.lin2(x)
 
         # print(x.shape)
@@ -145,7 +155,7 @@ test_loss_graph = []
 
 best_acc = 0
 
-while epoch < 50:
+while epoch < 30:
     # arrays for metrics
     logs = {}
     train_loss_arr = np.zeros(0)

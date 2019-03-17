@@ -158,8 +158,9 @@ train_loss_graph = []
 test_loss_graph = []
 
 best_acc = 0
+best_epoch = 0
 
-while epoch < 30:
+while epoch < 20:
     # arrays for metrics
     logs = {}
     train_loss_arr = np.zeros(0)
@@ -206,7 +207,9 @@ while epoch < 30:
     train_loss_graph.append(train_loss_arr.mean())
     test_loss_graph.append(test_loss_arr.mean())
 
-    best_acc = max(best_acc, test_acc_arr.mean())
+    if test_acc_arr.mean() > best_acc:
+        best_acc = test_acc_arr.mean()
+        best_epoch = epoch
 
     # NOTE: live plot library has dumb naming forcing our 'test' to be called 'validation'
     # liveplot.update({
@@ -269,5 +272,5 @@ while epoch < 30:
 
 # endregion
 
-print("Best test accuracy: " + format_acc(best_acc, convert_to_percentage=True))
+print(f"Best test accuracy occurred in epoch {best_epoch + 1}: " + format_acc(best_acc, convert_to_percentage=True))
 create_end_graphs(train_acc_graph, test_acc_graph, train_loss_graph, test_loss_graph)

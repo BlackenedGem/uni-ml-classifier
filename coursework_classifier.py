@@ -107,10 +107,12 @@ class MyNetwork(nn.Module):
 
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2d(32)
-        self.conv2 = nn.Conv2d(in_channels=32, out_channels=128, kernel_size=5, stride=1, padding=1, dilation=2)
-        self.bn2 = nn.BatchNorm2d(128)
+        self.conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=1, dilation=2)
+        self.bn2 = nn.BatchNorm2d(64)
+        self.conv3 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, stride=1)
+        self.bn3 = nn.BatchNorm2d(128)
 
-        self.lin1 = nn.Linear(in_features=128 * 5 * 5, out_features=400)
+        self.lin1 = nn.Linear(in_features=128 * 2 * 2, out_features=400)
         self.lin2 = nn.Linear(in_features=400, out_features=200)
         self.lin3 = nn.Linear(in_features=200, out_features=100)
 
@@ -122,6 +124,9 @@ class MyNetwork(nn.Module):
 
         # print(x.shape)
         x = F.relu(self.bn2(self.conv2(x)))
+        x = self.avgpool(x)
+
+        x = F.relu(self.bn3(self.conv3(x)))
         x = self.avgpool(x)
         # print(x.shape)
 

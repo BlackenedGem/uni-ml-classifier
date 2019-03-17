@@ -99,27 +99,30 @@ class MyNetwork(nn.Module):
     def __init__(self):
         super(MyNetwork, self).__init__()
 
-        self.maxpool = nn.MaxPool2d(2, 2)
+        self.maxpool = nn.MaxPool2d(2)
+        self.avgpool = nn.AvgPool2d(2)
 
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=128, kernel_size=3, stride=1, padding=1)
-        self.bn1 = nn.BatchNorm2d(128)
-        self.conv2 = nn.Conv2d(in_channels=128, out_channels=64, kernel_size=4, stride=1, padding=1)
-        self.bn2 = nn.BatchNorm2d(64)
-        self.conv3 = nn.Conv2d(in_channels=64, out_channels=16, kernel_size=5, stride=2, padding=1, dilation=2)
-        self.bn3 = nn.BatchNorm2d(16)
+        self.dropout_low = nn.Dropout2d(0.2)
+        self.dropout_high = nn.Dropout2d(0.4)
 
-        self.lin1 = nn.Linear(in_features=16 * 6 * 6, out_features=250)
-        self.lin2 = nn.Linear(in_features=250, out_features=150)
-        self.lin3 = nn.Linear(in_features=150, out_features=100)
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3, stride=1, padding=1)
+        self.bn1 = nn.BatchNorm2d(32)
+        self.conv2 = nn.Conv2d(in_channels=32, out_channels=128, kernel_size=5, stride=1, padding=1, dilation=2)
+        self.bn2 = nn.BatchNorm2d(128)
+
+        self.lin1 = nn.Linear(in_features=128 * 5 * 5, out_features=400)
+        self.lin2 = nn.Linear(in_features=400, out_features=200)
+        self.lin3 = nn.Linear(in_features=200, out_features=100)
 
     def forward(self, x):
         # print(x.shape)
 
         x = F.relu(self.bn1(self.conv1(x)))
-        # print(x.shape)
-        x = self.bn2(F.relu(self.conv2(x)))
-        x = F.relu(self.bn3(self.conv3(x)))
         x = self.maxpool(x)
+
+        # print(x.shape)
+        x = F.relu(self.bn2(self.conv2(x)))
+        x = self.avgpool(x)
         # print(x.shape)
 
         x = x.view(x.size(0), -1)  # flatten input as we're using linear layers

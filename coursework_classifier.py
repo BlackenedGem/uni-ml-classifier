@@ -101,14 +101,14 @@ class MyNetwork(nn.Module):
 
         self.maxpool = nn.MaxPool2d(2, 2)
 
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=6, kernel_size=4, stride=1, padding=1)
-        self.bn1 = nn.BatchNorm2d(6)
-        self.conv2 = nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, stride=1, padding=1)
-        self.bn2 = nn.BatchNorm2d(16)
-        self.conv3 = nn.Conv2d(in_channels=16, out_channels=128, kernel_size=4, stride=2, padding=1, dilation=2)
-        self.bn3 = nn.BatchNorm2d(128)
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=128, kernel_size=3, stride=1, padding=1)
+        self.bn1 = nn.BatchNorm2d(128)
+        self.conv2 = nn.Conv2d(in_channels=128, out_channels=64, kernel_size=4, stride=1, padding=1)
+        self.bn2 = nn.BatchNorm2d(64)
+        self.conv3 = nn.Conv2d(in_channels=64, out_channels=16, kernel_size=5, stride=2, padding=1, dilation=2)
+        self.bn3 = nn.BatchNorm2d(16)
 
-        self.lin1 = nn.Linear(in_features=128 * 6 * 6, out_features=250)
+        self.lin1 = nn.Linear(in_features=16 * 6 * 6, out_features=250)
         self.lin2 = nn.Linear(in_features=250, out_features=150)
         self.lin3 = nn.Linear(in_features=150, out_features=100)
 

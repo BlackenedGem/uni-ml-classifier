@@ -60,6 +60,7 @@ class_names = ['apple', 'aquarium_fish', 'baby', 'bear', 'beaver', 'bed', 'bee',
 
 train_loader = torch.utils.data.DataLoader(
     torchvision.datasets.CIFAR100('data', train=True, download=True, transform=torchvision.transforms.Compose([
+        torchvision.transforms.RandomHorizontalFlip(),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])),
@@ -132,8 +133,8 @@ class MyNetwork(nn.Module):
 
         x = x.view(x.size(0), -1)  # flatten input as we're using linear layers
         # print(x.shape)
-        x = self.dropout_low(F.relu(self.lin1(x)))
-        x = self.dropout_low(F.relu(self.lin2(x)))
+        x = F.relu(self.lin1(x))
+        x = F.relu(self.lin2(x))
         x = self.lin3(x)
 
         # print(x.shape)

@@ -3,6 +3,7 @@
 
 import matplotlib.pyplot as plt
 import matplotlib as mlp
+from pylab import MaxNLocator
 
 def format_acc(number, convert_to_percentage=False):
     if convert_to_percentage:
@@ -32,15 +33,17 @@ def create_end_graphs(acc, val_acc, loss, val_loss):
     sp = plt.subplot(1, 2, 1)
     # noinspection PyUnresolvedReferences
     sp.yaxis.set_major_formatter(mlp.ticker.StrMethodFormatter('{x}%'))
+    sp.xaxis.set_major_locator(MaxNLocator(integer=True))
     plt.title("Accuracy")
     plt.xlabel("Epoch")
     plt.plot(acc, 'b-', label='training')
     plt.plot(val_acc, 'g-', label='test')
     plt.legend(loc='lower right')
 
-    plt.subplot(1, 2, 2)
+    sp = plt.subplot(1, 2, 2)
     plt.title("Loss")
     plt.xlabel("Epoch")
+    sp.xaxis.set_major_locator(MaxNLocator(integer=True))
     plt.plot(loss, 'b-', label='training')
     plt.plot(val_loss, 'g-', label='test')
     plt.legend(loc='upper right')

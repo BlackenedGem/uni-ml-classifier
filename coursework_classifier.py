@@ -132,8 +132,8 @@ class MyNetwork(nn.Module):
 
         x = x.view(x.size(0), -1)  # flatten input as we're using linear layers
         # print(x.shape)
-        x = F.relu(self.lin1(x))
-        x = F.relu(self.lin2(x))
+        x = self.dropout_low(F.relu(self.lin1(x)))
+        x = self.dropout_low(F.relu(self.lin2(x)))
         x = self.lin3(x)
 
         # print(x.shape)
@@ -165,7 +165,7 @@ test_loss_graph = []
 best_acc = 0
 best_epoch = 0
 
-while epoch < 20:
+while epoch < 30:
     # arrays for metrics
     logs = {}
     train_loss_arr = np.zeros(0)

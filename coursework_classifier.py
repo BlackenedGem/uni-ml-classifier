@@ -6,7 +6,7 @@ if QUICK_MODE:
     NUM_EPOCHS = 30
 else:
     lin_layer_features = 32000
-    NUM_EPOCHS = 45
+    NUM_EPOCHS = 1
 
 # region Imports and pytorch setup
 
@@ -32,7 +32,6 @@ if torch.cuda.is_available():
 else:
     print("Using CPU")
     device = torch.device('cpu')
-
 
 # endregion
 # region Import dataset
@@ -123,7 +122,7 @@ N = MyNetwork().to(device)
 print(f'> Number of network parameters {len(torch.nn.utils.parameters_to_vector(N.parameters())):,}')
 
 # initialise the optimiser
-optimiser = torch.optim.SGD(N.parameters(), lr=1e-1, momentum=0.9)
+optimiser = torch.optim.SGD(N.parameters(), lr=1e-3, momentum=0.9)
 epoch = 0
 # liveplot = PlotLosses()
 

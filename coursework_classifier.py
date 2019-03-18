@@ -100,9 +100,8 @@ class MyNetwork(nn.Module):
         self.conv3 = nn.Conv2d(in_channels=128, out_channels=128, kernel_size=4, stride=1, padding=1)
         self.bn3 = nn.BatchNorm2d(128)
 
-        self.lin1 = nn.Linear(in_features=128 * 3 * 3, out_features=400)
-        self.lin2 = nn.Linear(in_features=400, out_features=200)
-        self.lin3 = nn.Linear(in_features=200, out_features=100)
+        self.lin1 = nn.Linear(in_features=128 * 3 * 3, out_features=2000)
+        self.lin2 = nn.Linear(in_features=2000, out_features=100)
 
     def forward(self, x):
         # print(x.shape)
@@ -121,8 +120,7 @@ class MyNetwork(nn.Module):
         x = x.view(x.size(0), -1)  # flatten input as we're using linear layers
         # print(x.shape)
         x = F.relu(self.lin1(x))
-        x = F.relu(self.lin2(x))
-        x = self.lin3(x)
+        x = self.lin2(x)
 
         # print(x.shape)
         # print("Done")
@@ -153,7 +151,7 @@ test_loss_graph = []
 best_acc = 0
 best_epoch = 0
 
-num_epochs = 30
+num_epochs = 35
 while epoch < num_epochs:
     # arrays for metrics
     logs = {}

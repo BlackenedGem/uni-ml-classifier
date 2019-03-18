@@ -143,9 +143,9 @@ num_epochs = 35
 while epoch < num_epochs:
     # arrays for metrics
     logs = {}
-    train_loss_arr = np.zeros(0)
+    train_loss_val = 0
+    test_loss_val = 0
     train_acc_arr = np.zeros(0)
-    test_loss_arr = np.zeros(0)
     test_acc_arr = np.zeros(0)
 
     # iterate over some of the train dataset
@@ -159,7 +159,7 @@ while epoch < num_epochs:
         train_loss.backward()
         optimiser.step()
 
-        train_loss_arr = np.append(train_loss_arr, train_loss.cpu().data)
+        train_loss_val = torch.mean(train_loss).item()
         train_acc_arr = np.append(train_acc_arr, pred.data.eq(t.view_as(pred)).float().mean().item())
 
     # iterate entire test dataset
@@ -170,7 +170,7 @@ while epoch < num_epochs:
         train_loss = torch.nn.functional.cross_entropy(p, t)
         pred = p.argmax(dim=1, keepdim=True)
 
-        test_loss_arr = np.append(test_loss_arr, train_loss.cpu().data)
+        test_loss_val = torch.nn.functional.cross_entropy(p, t)
         test_acc_arr = np.append(test_acc_arr, pred.data.eq(t.view_as(pred)).float().mean().item())
 
     total_duration = time.time() - start_time
@@ -179,13 +179,13 @@ while epoch < num_epochs:
     print(f"Epoch {epoch + 1} finished ({format_time(loop_duration)}/{format_time(total_duration)})")
     print("\tAccuracy: " + format_acc(train_acc_arr.mean(), convert_to_percentage=True))
     print("\tVal Accuracy: " + format_acc(test_acc_arr.mean(), convert_to_percentage=True))
-    print("\tLoss: " + format_acc(train_loss_arr.mean()))
-    print("\tVal loss: " + format_acc(test_loss_arr.mean()))
+    print("\tLoss: " + format_acc(train_loss_val))
+    print("\tVal loss: " + format_acc(test_loss_val))
 
     train_acc_graph.append(train_acc_arr.mean() * 100)
     test_acc_graph.append(test_acc_arr.mean() * 100)
-    train_loss_graph.append(train_loss_arr.mean())
-    test_loss_graph.append(test_loss_arr.mean())
+    train_loss_graph.append(train_loss_val)
+    test_loss_graph.append(test_loss_val)
 
     if test_acc_arr.mean() > best_acc:
         best_acc = test_acc_arr.mean()

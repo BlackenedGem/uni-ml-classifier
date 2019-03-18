@@ -153,7 +153,8 @@ test_loss_graph = []
 best_acc = 0
 best_epoch = 0
 
-while epoch < 30:
+num_epochs = 30
+while epoch < num_epochs:
     # arrays for metrics
     logs = {}
     train_loss_arr = np.zeros(0)
@@ -204,17 +205,15 @@ while epoch < 30:
         best_acc = test_acc_arr.mean()
         best_epoch = epoch
 
-    # NOTE: live plot library has dumb naming forcing our 'test' to be called 'validation'
-    # liveplot.update({
-    #     'accuracy': train_acc_arr.mean(),
-    #     'val_accuracy': test_acc_arr.mean(),
-    #     'loss': train_loss_arr.mean(),
-    #     'val_loss': test_loss_arr.mean()
-    # })
-    # liveplot.draw()
-
     epoch += 1
     loop_start_time = time.time()
+
+    if epoch == num_epochs:
+        try:
+            extra_epochs = input("Number of epochs to use: ")
+            num_epochs += int(extra_epochs)
+        except ValueError:
+            pass
 
 # endregion
 

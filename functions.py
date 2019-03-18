@@ -17,7 +17,6 @@ def format_time(duration):
     minutes = int(duration % 60)
     hours = int(duration // 60)
 
-    time_string = f"{seconds:02}"
     if hours > 0:
         time_string = f"{hours}:{minutes:02}:{seconds:02.0f}"
     elif minutes > 0:

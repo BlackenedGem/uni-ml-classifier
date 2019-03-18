@@ -1,9 +1,12 @@
-LOW_MEMORY_MODE = False
+# Tweakable constants
+QUICK_MODE = False
 
-if LOW_MEMORY_MODE:
+if QUICK_MODE:
     lin_layer_features = 400
+    NUM_EPOCHS = 30
 else:
-    lin_layer_features = 8000
+    lin_layer_features = 32000
+    NUM_EPOCHS = 45
 
 # region Imports and pytorch setup
 
@@ -120,7 +123,7 @@ N = MyNetwork().to(device)
 print(f'> Number of network parameters {len(torch.nn.utils.parameters_to_vector(N.parameters())):,}')
 
 # initialise the optimiser
-optimiser = torch.optim.SGD(N.parameters(), lr=0.001, momentum=0.9)
+optimiser = torch.optim.SGD(N.parameters(), lr=1e-1, momentum=0.9)
 epoch = 0
 # liveplot = PlotLosses()
 
@@ -139,12 +142,11 @@ test_loss_graph = []
 best_acc = 0
 best_epoch = 0
 
-num_epochs = 35
-while epoch < num_epochs:
+while epoch < NUM_EPOCHS:
     # arrays for metrics
     logs = {}
-    train_loss_val = 0
-    test_loss_val = 0
+    train_loss_arr = np.zeros(0)
+    test_loss_arr = np.zeros(0)
     train_acc_arr = np.zeros(0)
     test_acc_arr = np.zeros(0)
 
@@ -159,7 +161,7 @@ while epoch < num_epochs:
         train_loss.backward()
         optimiser.step()
 
-        train_loss_val = torch.mean(train_loss).item()
+        train_loss_arr = np.append(train_loss_arr, torch.mean(train_loss).item())
         train_acc_arr = np.append(train_acc_arr, pred.data.eq(t.view_as(pred)).float().mean().item())
 
     # iterate entire test dataset
@@ -170,7 +172,7 @@ while epoch < num_epochs:
         train_loss = torch.nn.functional.cross_entropy(p, t)
         pred = p.argmax(dim=1, keepdim=True)
 
-        test_loss_val = torch.nn.functional.cross_entropy(p, t)
+        test_loss_arr = np.append(test_loss_arr, torch.mean(train_loss).item())
         test_acc_arr = np.append(test_acc_arr, pred.data.eq(t.view_as(pred)).float().mean().item())
 
     total_duration = time.time() - start_time
@@ -179,13 +181,13 @@ while epoch < num_epochs:
     print(f"Epoch {epoch + 1} finished ({format_time(loop_duration)}/{format_time(total_duration)})")
     print("\tAccuracy: " + format_acc(train_acc_arr.mean(), convert_to_percentage=True))
     print("\tVal Accuracy: " + format_acc(test_acc_arr.mean(), convert_to_percentage=True))
-    print("\tLoss: " + format_acc(train_loss_val))
-    print("\tVal loss: " + format_acc(test_loss_val))
+    print("\tLoss: " + format_acc(train_loss_arr.mean()))
+    print("\tVal loss: " + format_acc(test_loss_arr.mean()))
 
     train_acc_graph.append(train_acc_arr.mean() * 100)
     test_acc_graph.append(test_acc_arr.mean() * 100)
-    train_loss_graph.append(train_loss_val)
-    test_loss_graph.append(test_loss_val)
+    train_loss_graph.append(train_loss_arr.mean())
+    test_loss_graph.append(test_loss_arr.mean())
 
     if test_acc_arr.mean() > best_acc:
         best_acc = test_acc_arr.mean()

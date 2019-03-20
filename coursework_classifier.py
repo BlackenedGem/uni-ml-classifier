@@ -2,23 +2,20 @@
 QUICK_MODE = False
 
 if QUICK_MODE:
-    lin_layer_features = 400
-    NUM_EPOCHS = 30
+    lin_layer_features = 2000
+    NUM_EPOCHS = 35
 else:
     lin_layer_features = 32000
-    NUM_EPOCHS = 1
+    NUM_EPOCHS = 45
 
 # region Imports and pytorch setup
 
-import math
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
-import matplotlib.pyplot as plt
 import time
-from livelossplot import PlotLosses
 
 from functions import *
 
@@ -145,8 +142,8 @@ while epoch < NUM_EPOCHS:
     # arrays for metrics
     logs = {}
     train_loss_arr = np.zeros(0)
-    test_loss_arr = np.zeros(0)
     train_acc_arr = np.zeros(0)
+    test_loss_arr = np.zeros(0)
     test_acc_arr = np.zeros(0)
 
     # iterate over some of the train dataset
